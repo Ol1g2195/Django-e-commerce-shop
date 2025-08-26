@@ -11,6 +11,69 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="{% static 'style_index.css' %}" rel="stylesheet">
+    <style>
+        /* Плавающая кнопка чата */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chat-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        .chat-button:hover {
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .chat-button i {
+            font-size: 24px;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+            50% {
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.6);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .chat-widget {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .chat-button {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .chat-button i {
+                font-size: 20px;
+            }
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -35,6 +98,13 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{% url 'chat:chat' %}">
+                                <i class="fas fa-comments"></i> Чат
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:profile' %}"><i class="fas fa-user"></i> Профиль</a>
                         </li>
                         <li class="nav-item">
@@ -57,6 +127,15 @@
     <main class="container my-4">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Плавающая кнопка чата -->
+    {% if user.is_authenticated %}
+        <div class="chat-widget">
+            <a href="{% url 'chat:chat' %}" class="chat-button" title="Чат поддержки">
+                <i class="fas fa-comments"></i>
+            </a>
+        </div>
+    {% endif %}
 
     <!-- Футер -->
     <footer class="bg-light py-4 mt-auto">
