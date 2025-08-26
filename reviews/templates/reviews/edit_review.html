@@ -1,0 +1,84 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Редактировать отзыв</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title mb-4">{{ review.product.name }}</h5>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Оценка</label>
+                            <div class="rating-input">
+                                {% for i in "54321" %}
+                                <input type="radio" name="rating" value="{{ i }}" id="rating{{ i }}" 
+                                       {% if review.rating == i|add:"0" %}checked{% endif %} required>
+                                <label for="rating{{ i }}">★</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="text" class="form-label">Ваш отзыв</label>
+                            <textarea class="form-control" id="text" name="text" rows="4" required>{{ review.text }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'product_detail' review.product.id %}" class="btn btn-outline-secondary">Отмена</a>
+                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating-input input {
+    display: none;
+}
+
+.rating-input label {
+    cursor: pointer;
+    font-size: 2em;
+    color: #ddd;
+    padding: 0 0.1em;
+}
+
+.rating-input input:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: #ffd700;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.btn-success:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,140 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image %}
+                <div class="product-image-container">
+                    <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                </div>
+            {% else %}
+                <div class="product-image-container no-image-placeholder">
+                    <p>{{ product.name }}</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2>{{ product.name }}</h2>
+            <p class="text-muted">Категория: {{ product.category.name }}</p>
+            <p class="h3 text-success mb-4">{{ product.price }} ₽</p>
+            <p>{{ product.description }}</p>
+            
+            <form method="post" action="{% url 'add_to_cart' product.id %}" class="mt-4">
+                {% csrf_token %}
+                <div class="input-group mb-3" style="max-width: 200px;">
+                    <input type="number" name="quantity" value="1" min="1" class="form-control">
+                    <button type="submit" class="btn btn-success">В корзину</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-8">
+            <h4>Отзывы о товаре</h4>
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <strong>{{ review.user.username }}</strong>
+                            {% if review.user == user and is_buyer %}
+                                <span class="badge bg-primary ms-2">Покупатель</span>
+                            {% elif review.user != user and review_buyers|get_item:review.id %}
+                                <span class="badge bg-primary ms-2">Покупатель</span>
+                            {% endif %}
+                            <span class="ms-3">Оценка: <b>{{ review.rating }}</b> ★</span>
+                            <span class="text-muted ms-3">{{ review.created_at|date:'d.m.Y H:i' }}</span>
+                        </div>
+                        <div>{{ review.text }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Пока нет отзывов об этом товаре.</p>
+            {% endif %}
+            
+            {% if user.is_authenticated %}
+                <div class="mt-4">
+                    <h5>Оставить отзыв</h5>
+                    <form method="post" action="{% url 'reviews:create_review' product.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Оценка</label>
+                            <div class="rating-input">
+                                {% for i in "54321" %}
+                                <input type="radio" name="rating" value="{{ i }}" id="rating{{ i }}" required>
+                                <label for="rating{{ i }}">★</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="text" class="form-label">Ваш отзыв</label>
+                            <textarea class="form-control" id="text" name="text" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Отправить отзыв</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.product-image-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.no-image-placeholder {
+    background-color: #f8f9fa;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    font-size: 1.5rem;
+}
+
+.no-image-placeholder p {
+    margin: 0;
+    word-break: break-word;
+}
+
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+.rating-input input {
+    display: none;
+}
+
+.rating-input label {
+    cursor: pointer;
+    font-size: 2em;
+    color: #ddd;
+    padding: 0 0.1em;
+}
+
+.rating-input input:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: #ffd700;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,68 @@
+{% extends 'products/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Мои заказы</h2>
+    
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>№ Заказа</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Сумма</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <span class="badge {% if order.status == 'completed' %}bg-success{% elif order.status == 'processing' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ order.total_amount }} ₽</td>
+                        <td>
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-sm btn-primary">Подробнее</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет заказов.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+</style>
+{% endblock %} 

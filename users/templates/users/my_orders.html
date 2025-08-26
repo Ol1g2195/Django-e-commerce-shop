@@ -1,0 +1,43 @@
+{% extends 'products/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Мои заказы</h2>
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>№ заказа</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Сумма</th>
+                        <th>Товары</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.created_at|date:'d.m.Y H:i' }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        <td>{{ order.total }} ₽</td>
+                        <td>
+                            <ul class="mb-0">
+                                {% for item in order.items.all %}
+                                <li>
+                                    <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+                                    — {{ item.quantity }} шт. × {{ item.price }} ₽
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">У вас пока нет заказов.</div>
+    {% endif %}
+</div>
+{% endblock %} 
