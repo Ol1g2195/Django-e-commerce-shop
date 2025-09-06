@@ -41,7 +41,7 @@ org/
 
 ### 1. Клонирование репозитория
 ```bash
-git clone <ваш-репозиторий>
+git clone https://github.com/Ol1g2195/Django-e-commerce-shop
 cd org
 ```
 
